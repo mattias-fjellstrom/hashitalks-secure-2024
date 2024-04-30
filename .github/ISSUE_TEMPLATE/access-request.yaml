@@ -1,0 +1,40 @@
+name: Boundary access request
+description: Request access to a resource through Boundary.
+title: "[Access Request]: "
+labels: ["boundary"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Specify the details of the resource you need to access.
+  - type: dropdown
+    id: target
+    attributes:
+      label: What do you need to access?
+      description: Self-service is available for the following targets
+      options:
+        - aws.ec2
+        - aws.postgres.read
+        - aws.postgres.write
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why do you need access to this resource?
+    validations:
+      required: true
+  - type: dropdown
+    id: time
+    attributes:
+      label: For how long do you need access?
+      description: What version of our software are you running?
+      options:
+        - 1 hour
+        - 3 hours
+        - 8 hours
+      default: 0
+    validations:
+      required: true

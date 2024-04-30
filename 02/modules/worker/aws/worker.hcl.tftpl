@@ -1,0 +1,63 @@
+disable_mlock = true
+
+%{ if is_ingress ~}
+hcp_boundary_cluster_id = "${hcp_boundary_cluster_id}"
+%{ endif ~}
+
+listener "tcp" {
+  address = "0.0.0.0:9202"
+  purpose = "proxy"
+}
+
+events {
+  observations_enabled = true
+  sysevents_enabled    = true
+  telemetry_enabled    = false
+
+  sink {
+    name        = "sysevents-sink"
+    type        = "file"
+    description = "System events sent to a file"
+    event_types = ["system"]
+    format      = "cloudevents-json"
+    
+    file {
+      path      = "/var/log/boundary"
+      file_name = "system.ndjson"
+    }
+  }
+
+  sink {
+    name        = "obs-sink"
+    description = "Observations sent to a file"
+    event_types = ["observation"]
+    format      = "cloudevents-json"
+    
+    file {
+      path      = "/var/log/boundary"
+      file_name = "events.ndjson"
+    }
+  }
+}
+
+worker {
+  public_addr = "IP"
+
+  %{ if !is_ingress ~}
+  initial_upstreams = [
+    %{ for addr in initial_upstreams ~}
+    "${addr}",
+    %{ endfor ~}
+  ]
+  %{ endif ~}
+  
+  auth_storage_path                     = "/etc/boundary.d/worker"
+  recording_storage_path                = "/tmp/session-recordings"
+  controller_generated_activation_token = "${controller_generated_activation_token}"
+  
+  tags {
+    %{ for key, value in tags ~}
+    ${key} = "${value}"
+    %{ endfor ~}
+  }
+}

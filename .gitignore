@@ -1,0 +1,14 @@
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup
+*.tfvars
+.terraform.tfstate.lock.info
+*.pem
+*.env
+*.zip
+bootstrap
+.DS_Store
+*.tfplan
+NOTES.md
+vault.sh
