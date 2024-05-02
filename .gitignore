@@ -3,3 +3,6 @@
 *.tfstate.backup
 *.tfvars
 *.pem
+*.env
+*.zip
+bootstrap

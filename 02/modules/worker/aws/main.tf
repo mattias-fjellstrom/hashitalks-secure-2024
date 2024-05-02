@@ -114,9 +114,6 @@ resource "aws_instance" "this" {
   tags                        = var.aws_instance_tags
   iam_instance_profile        = var.aws_instance_profile_name
 
-  # TODO delete
-  key_name = var.aws_ec2_key_name
-
   lifecycle {
     ignore_changes = [user_data_base64]
   }

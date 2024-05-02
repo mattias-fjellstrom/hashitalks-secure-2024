@@ -11,3 +11,7 @@ resource "boundary_auth_method_oidc" "provider" {
   state                = "active-public"
   claims_scopes        = ["groups"]
 }
+
+data "boundary_auth_method" "password" {
+  name = "password"
+}

@@ -29,6 +29,12 @@ variable "aws_public_subnets" {
   }))
 }
 
+variable "aws_rds_master_password" {
+  description = "Master password for the RDS database"
+  type        = string
+  sensitive   = true
+}
+
 variable "entra_id_domain" {
   description = "Custom domain name for Entra ID"
   type        = string

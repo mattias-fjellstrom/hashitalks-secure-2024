@@ -49,6 +49,17 @@ resource "aws_security_group_rule" "private_egress_to_ssh_targets" {
   source_security_group_id = aws_security_group.private_target.id
 }
 
+resource "aws_security_group_rule" "private_egress_to_postgres_targets" {
+  description       = "Egress traffic to postgres targets"
+  security_group_id = aws_security_group.private_worker.id
+
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 5432
+  to_port                  = 5432
+  source_security_group_id = aws_security_group.db.id
+}
+
 resource "aws_security_group_rule" "private_egress_to_internet_80" {
   description       = "Egress traffic to the internet (port 80)"
   security_group_id = aws_security_group.private_worker.id
@@ -88,17 +99,14 @@ locals {
       type   = "pki"
       vault  = "true"
       subnet = "private"
+      cloud  = "aws"
       region = var.aws_region
-      az     = var.aws_private_subnets[0].availability_zone
     }
   })
 }
 
 module "private_worker" {
-  source = "./modules/worker"
-
-  # TODO delete
-  aws_ec2_key_name = aws_key_pair.ec2.key_name
+  source = "./modules/worker/aws"
 
   aws_region            = var.aws_region
   aws_subnet            = var.aws_private_subnets[0]

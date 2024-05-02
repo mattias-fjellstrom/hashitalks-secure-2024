@@ -45,9 +45,3 @@ variable "boundary_worker_config" {
   description = "A HCL file for the worker configuration"
   type        = string
 }
-
-# TODO delete
-variable "aws_ec2_key_name" {
-  description = "Instance key name for SSH access"
-  type        = string
-}

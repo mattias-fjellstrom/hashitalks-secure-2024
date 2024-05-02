@@ -1,5 +1,10 @@
 terraform {
   required_providers {
+    archive = {
+      source  = "hashicorp/archive"
+      version = "2.4.2"
+    }
+
     aws = {
       source  = "hashicorp/aws"
       version = "5.42.0"
@@ -12,12 +17,42 @@ terraform {
 
     boundary = {
       source  = "hashicorp/boundary"
-      version = "1.1.14"
+      version = "1.1.15"
+    }
+
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = "2.3.4"
     }
 
     http = {
       source  = "hashicorp/http"
       version = "3.4.2"
+    }
+
+    local = {
+      source  = "hashicorp/local"
+      version = "2.5.1"
+    }
+
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.2"
+    }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.1"
+    }
+
+    time = {
+      source  = "hashicorp/time"
+      version = "0.11.1"
+    }
+
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.0.5"
     }
 
     vault = {

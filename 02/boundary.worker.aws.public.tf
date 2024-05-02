@@ -91,14 +91,14 @@ locals {
       type   = "pki"
       subnet = "public"
       vaule  = "false"
+      cloud  = "aws"
       region = var.aws_region
-      az     = var.aws_public_subnets[0].availability_zone
     }
   })
 }
 
 module "public_worker" {
-  source = "./modules/worker"
+  source = "./modules/worker/aws"
 
   aws_region            = var.aws_region
   aws_subnet            = var.aws_public_subnets[0]
@@ -110,9 +110,6 @@ module "public_worker" {
   aws_instance_tags = {
     Name = "Boundary Worker (public)"
   }
-
-  # TODO delete
-  aws_ec2_key_name = aws_key_pair.ec2.key_name
 
   boundary_worker_config = local.public_worker_config
 }

@@ -39,6 +39,10 @@ resource "hcp_vault_cluster_admin_token" "this" {
 }
 
 # BOUNDARY ---------------------------------------------------------------------
+import {
+  id = "aws-boundary"
+  to = hcp_boundary_cluster.this
+}
 resource "hcp_boundary_cluster" "this" {
   cluster_id = "aws-boundary"
   username   = "admin"

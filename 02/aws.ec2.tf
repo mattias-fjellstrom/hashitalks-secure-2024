@@ -112,6 +112,21 @@ data "cloudinit_config" "ec2" {
       sudo systemctl restart sshd.service
     EOF
   }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = <<-EOF
+      #!/bin/bash
+      sudo apt update
+      sudo apt install -y stress rand
+
+      # random sleep between 0 and 900 seconds to simulate an issue
+      sleep $(rand -M 900)
+
+      # stress all cpus for ten minutes
+      stress --cpu $(nproc) --timeout 600
+    EOF
+  }
 }
 
 resource "aws_instance" "private_target" {
