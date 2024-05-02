@@ -22,11 +22,13 @@ jobs:
             -format=json \
             -keyring-type=none \
             -login-name=${{ vars.BOUNDARY_USERNAME }} \
-            -password="env://BOUNDARY_PASSWORD" | jq -r '.item.attributes.token')
+            -password=env://BOUNDARY_PASSWORD | jq -r '.item.attributes.token')
+
+            # set the boundary token as en environment variable for later steps
             echo "BOUNDARY_TOKEN=$BOUNDARY_TOKEN" >> $GITHUB_ENV
         env:
           BOUNDARY_PASSWORD: ${{ secrets.BOUNDARY_PASSWORD }}
       - name: List all scopes
         run: |
-          boundary scopes list -recursive
+          boundary scopes list -recursive -token env://BOUNDARY_TOKEN
  
