@@ -4,6 +4,9 @@ on:
   issues:
     types: [opened]
 
+permissions: 
+  issues: read
+
 jobs:
   provide-access:
     env:
