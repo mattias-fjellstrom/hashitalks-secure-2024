@@ -1,16 +1,17 @@
 name: New Boundary access request
 
 on:
-  issue_comment:
-    types: [created]
+  issues:
+    types: [opened]
 
 jobs:
   provide-access:
     env:
       BOUNDARY_ADDR: ${{ vars.BOUNDARY_ADDR }}
-    if: ${{ !github.event.issue.pull_request && github.event.issue.number == 1 }}
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo "Creator: ${{ event.issues.issue.user.email }}"
       - name: Install Boundary
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
