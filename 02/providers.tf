@@ -30,6 +30,11 @@ terraform {
       version = "3.4.2"
     }
 
+    github = {
+      source  = "integrations/github"
+      version = "6.2.1"
+    }
+
     local = {
       source  = "hashicorp/local"
       version = "2.5.1"
@@ -70,6 +75,10 @@ provider "boundary" {
   addr                   = var.hcp_boundary_cluster_url
   auth_method_login_name = "admin"
   auth_method_password   = var.hcp_boundary_admin_password
+}
+
+provider "github" {
+  owner = "mattias-fjellstrom-org"
 }
 
 provider "vault" {

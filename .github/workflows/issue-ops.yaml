@@ -1,4 +1,4 @@
-name: enable postgress access
+name: New Boundary access request
 
 on:
   issue_comment:
@@ -6,8 +6,7 @@ on:
 
 jobs:
   provide-access:
-    name: New access request
-    if: ${{ !github.event.issue.pull_request }}
+    if: ${{ !github.event.issue.pull_request && github.event.issue.number == 1 }}
     runs-on: ubuntu-latest
     environment: boundary
     steps:
