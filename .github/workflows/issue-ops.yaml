@@ -16,7 +16,7 @@ jobs:
           GITHUB_EVENT_CONTEXT:  ${{ toJson(github.event) }}
       - run: |
           echo "BODY: ${{ github.event.issue.body }}"
-          echo "USER: ${{ github.event.user.login }}"
+          echo "USER: ${{ github.event.issue.user.login }}"
       - name: Install Boundary
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -37,4 +37,13 @@ jobs:
       - name: List all scopes
         run: |
           boundary scopes list -recursive -token env://BOUNDARY_TOKEN
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for reporting!'
+            })
  
