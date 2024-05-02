@@ -18,7 +18,10 @@ jobs:
           sudo apt update && sudo apt install boundary
       - name: Sign-in to Boundary
         run: |
-          boundary authenticate password -login-name=${{ secrets.BOUNDARY_USERNAME }} -password=${{ secrets.BOUNDARY_PASSWORD }}
+          boundary authenticate password
+        env:
+          BOUNDARY_AUTHENTICATE_PASSWORD_LOGIN_NAME: ${{ secrets.BOUNDARY_USERNAME }}
+          BOUNDARY_AUTHENTICATE_PASSWORD_PASSWORD: ${{ secrets.BOUNDARY_PASSWORD }}
       - name: List all scopes
         run: |
           boundary scopes list -recursive
