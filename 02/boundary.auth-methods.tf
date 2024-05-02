@@ -8,8 +8,9 @@ resource "boundary_auth_method_oidc" "provider" {
   signing_algorithms   = ["RS256"]
   api_url_prefix       = var.hcp_boundary_cluster_url
   is_primary_for_scope = true
-  state                = "active-public"
+  state                = "active-private"
   claims_scopes        = ["groups"]
+  prompts              = ["select_account"]
 }
 
 data "boundary_auth_method" "password" {

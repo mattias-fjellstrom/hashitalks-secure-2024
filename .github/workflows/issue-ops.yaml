@@ -8,15 +8,16 @@ jobs:
   provide-access:
     if: ${{ !github.event.issue.pull_request && github.event.issue.number == 1 }}
     runs-on: ubuntu-latest
-    environment: boundary
     steps:
-      - name: install-boundary
+      - name: Install Boundary
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
           echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
           sudo apt update && sudo apt install boundary
-      - run: |
-          echo "A comment on issue $NUMBER"
-        env:
-          NUMBER: ${{ github.event.issue.number }}
+      - name: Sign-in to Boundary
+        run: |
+          boundary authenticate password -login-name=${{ secrets.BOUNDARY_USERNAME }} -password=${{ secrets.BOUNDARY_PASSWORD }}
+      - name: List all scopes
+        run: |
+          boundary scopes list -recursive
  
