@@ -20,7 +20,7 @@ jobs:
         run: |
           boundary authenticate password
         env:
-          BOUNDARY_AUTHENTICATE_PASSWORD_LOGIN_NAME: ${{ secrets.BOUNDARY_USERNAME }}
+          BOUNDARY_AUTHENTICATE_PASSWORD_LOGIN_NAME: ${{ vars.BOUNDARY_USERNAME }}
           BOUNDARY_AUTHENTICATE_PASSWORD_PASSWORD: ${{ secrets.BOUNDARY_PASSWORD }}
       - name: List all scopes
         run: |
