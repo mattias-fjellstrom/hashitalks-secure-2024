@@ -19,6 +19,7 @@ jobs:
       - name: Sign-in to Boundary
         run: |
           BOUNDARY_TOKEN=$(boundary authenticate password \
+            -keyring-type=none \
             -login-name=${{ vars.BOUNDARY_USERNAME }} \
             -password=env://BOUNDARY_PASSWORD | jq -r '.item.attributes.token')
             echo "BOUNDARY_TOKEN=$BOUNDARY_TOKEN" >> $GITHUB_ENV
