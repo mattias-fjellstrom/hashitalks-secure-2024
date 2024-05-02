@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Creator: ${{ github.event.issues.issue.user.email }}"
+          echo "GITHUB_EVENT_CONTEXT is $GITHUB_EVENT_CONTEXT"
+        env:
+          GITHUB_EVENT_CONTEXT:  ${{ toJson(github.event) }} 
       - name: Install Boundary
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
