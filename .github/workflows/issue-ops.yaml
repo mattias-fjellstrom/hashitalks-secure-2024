@@ -18,7 +18,10 @@ jobs:
           sudo apt update && sudo apt install boundary
       - name: Sign-in to Boundary
         run: |
-          boundary authenticate password -login-name=${{ vars.BOUNDARY_USERNAME }} -password=env://BOUNDARY_PASSWORD
+          BOUNDARY_TOKEN=$(boundary authenticate password \
+            -login-name=${{ vars.BOUNDARY_USERNAME }} \
+            -password=env://BOUNDARY_PASSWORD | jq -r '.item.attributes.token')
+            echo "BOUNDARY_TOKEN=$BOUNDARY_TOKEN" >> $GITHUB_ENV
         env:
           BOUNDARY_PASSWORD: ${{ secrets.BOUNDARY_PASSWORD }}
       - name: List all scopes
