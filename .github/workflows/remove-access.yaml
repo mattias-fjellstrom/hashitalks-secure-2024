@@ -8,18 +8,22 @@ permissions:
   issues: write
 
 jobs:
-  provide-access:
+  remove-access:
     env:
       BOUNDARY_ADDR: ${{ vars.BOUNDARY_ADDR }}
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "GITHUB_EVENT_CONTEXT is $GITHUB_EVENT_CONTEXT"
-        env:
-          GITHUB_EVENT_CONTEXT:  ${{ toJson(github.event) }}
-      - run: |
-          echo "BODY: ${{ github.event.issue.body }}"
-          echo "USER: ${{ github.event.issue.user.login }}"
+          regex="(aws.[a-z0-9]+.[a-z0-9]+)"
+          if [[ "${{ github.event.issue.body }}" =~ $regex ]]
+          then
+              target="${BASH_REMATCH[1]}"
+              echo "Will remove access from target ${target}"
+          else
+              echo "Could not parse the target, exits"
+              exit 1
+          fi
+          echo "BOUNDARY_TARGET_ALIAS=$target" >> $GITHUB_ENV
       - name: Install Boundary
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -39,15 +43,38 @@ jobs:
           BOUNDARY_PASSWORD: ${{ secrets.BOUNDARY_PASSWORD }}
       - name: Remove access
         run: |
-          # find the correct user
-          boundary users list \
-            -token env://BOUNDARY_TOKEN \
-            -format=json \
-            -recursive \
-            -filter '"mattias.fjellstrom@gmail.com" in "/item/email"'
+          echo "::add-mask::$BOUNDARY_TOKEN"
           
-          # find the correct role
-          # add principal to the role
+          # find the correct user
+          BOUNDARY_ACCOUNT_ID=$(boundary accounts list \
+            -token=env://BOUNDARY_TOKEN \
+            -format=json \
+            -auth-method-id=${{ vars.BOUNDARY_AUTH_METHOD_ID }} \
+            -filter '"/item/name" == "${{ github.event.issue.user.login }}"' | \
+            jq -r '.items[0].id')
+          echo "Account ID: $BOUNDARY_ACCOUNT_ID"
+          
+          BOUNDARY_USER_ID=$(boundary users list \
+            -token=env://BOUNDARY_TOKEN \
+            -recursive \
+            -format=json \
+            -filter="\"/item/primary_account_id\" == \"$BOUNDARY_ACCOUNT_ID\"" | \
+            jq -r '.items[0].id')
+          echo "User ID: $BOUNDARY_USER_ID"
+          
+          BOUNDARY_ROLE_ID=$(boundary roles list \
+            -token=env://BOUNDARY_TOKEN \
+            -recursive \
+            -format=json \
+            -filter='"/item/name" == "${{ env.BOUNDARY_TARGET_ALIAS }}"' | \
+            jq -r '.items[0].id')
+          echo "Role ID: $BOUNDARY_ROLE_ID"
+          
+          # remove principal from the role
+          boundary roles remove-principals \
+            -token=env://BOUNDARY_TOKEN \
+            -id="$BOUNDARY_ROLE_ID" \
+            -principal="$BOUNDARY_USER_ID"
       - name: Post comment to issue confirming removal
         uses: actions/github-script@v7
         with:
@@ -56,6 +83,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Access have been removed ❎'
+              body: 'Access have been removed ❌.'
             })
- 

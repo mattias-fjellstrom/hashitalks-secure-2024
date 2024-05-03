@@ -1,17 +1,21 @@
 resource "boundary_target" "ec2" {
-  type                     = "ssh"
-  name                     = "aws-ec2-static-private"
-  scope_id                 = boundary_scope.project.id
-  ingress_worker_filter    = "\"public\" in \"/tags/subnet\""
-  egress_worker_filter     = "\"private\" in \"/tags/subnet\""
-  session_connection_limit = -1
-  default_port             = 22
+  type     = "ssh"
+  name     = "aws-ec2-static-private"
+  scope_id = boundary_scope.project.id
+
+  ingress_worker_filter = "\"public\" in \"/tags/subnet\""
+  egress_worker_filter  = "\"private\" in \"/tags/subnet\""
+
   host_source_ids = [
     boundary_host_set_static.ec2.id,
   ]
   injected_application_credential_source_ids = [
     boundary_credential_library_vault_ssh_certificate.ec2.id,
   ]
+
+  default_port             = 22
+  session_connection_limit = -1
+  session_max_seconds      = 3600
   # uncomment to enable session recording
   #   enable_session_recording = true
   #   storage_bucket_id        = boundary_storage_bucket.session_recording.id
@@ -42,6 +46,7 @@ resource "boundary_target" "write" {
 
   default_port             = 5432
   session_connection_limit = -1
+  session_max_seconds      = 3600
 }
 
 resource "boundary_alias_target" "write" {
@@ -69,6 +74,7 @@ resource "boundary_target" "read" {
 
   default_port             = 5432
   session_connection_limit = -1
+  session_max_seconds      = 3600
 }
 
 resource "boundary_alias_target" "read" {
