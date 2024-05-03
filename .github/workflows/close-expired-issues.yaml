@@ -14,16 +14,24 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+            const opts = github.rest.issues.listForRepo.endpoint.merge({
+              state: "open",
             })
+
+            const issues = await github.paginate(opts)
             
             for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "Access expired. Closing issue. ⏰",
+              })
+
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                state: 'closed'
+                state: 'closed',
               })
             }
