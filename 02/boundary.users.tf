@@ -23,6 +23,30 @@ resource "boundary_user" "lambda" {
   ]
 }
 
+# GITHUB
+resource "random_password" "github" {
+  upper   = true
+  lower   = true
+  numeric = true
+  special = false
+  length  = 32
+}
+
+resource "boundary_account_password" "github" {
+  name           = "github"
+  auth_method_id = data.boundary_auth_method.password.id
+  login_name     = "github"
+  password       = random_password.github.result
+}
+
+resource "boundary_user" "github" {
+  name     = "github"
+  scope_id = "global"
+  account_ids = [
+    boundary_account_password.github.id
+  ]
+}
+
 # OIDC accounts
 resource "boundary_account_oidc" "hashitalks_john" {
   name           = data.azuread_user.lane_buckwindow.mail_nickname

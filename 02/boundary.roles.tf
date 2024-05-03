@@ -75,3 +75,25 @@ resource "boundary_role" "lambda" {
     boundary_user.lambda.id,
   ]
 }
+
+resource "boundary_role" "github" {
+  name        = "github-automation"
+  description = "Role for GitHub issue-ops automation"
+  scope_id    = "global"
+  grant_strings = [
+    "ids=${boundary_role.ec2.id};type=role;actions=read,list,add-principals,remove-principals",
+    "ids=${boundary_role.postgres_read.id};type=role;actions=read,list,add-principals,remove-principals",
+    "ids=${boundary_role.postgres_readwrite.id};type=role;actions=read,list,add-principals,remove-principals",
+    "type=user;actions=list",
+    "ids=*;type=account;actions=read,list",
+    "type=role;actions=list",
+    "ids=*;type=*;actions=*"
+  ]
+  principal_ids = [
+    boundary_user.github.id,
+  ]
+  grant_scope_ids = [
+    boundary_scope.organization.id,
+    boundary_scope.project.id,
+  ]
+}
