@@ -68,7 +68,7 @@ jobs:
             -token=env://BOUNDARY_TOKEN \
             -recursive \
             -format=json \
-            -filter='"$BOUNDARY_ACCOUNT_ID" in "/item/primary_account_id"' | \
+            -filter="\"$BOUNDARY_ACCOUNT_ID\" in \"/item/primary_account_id\"" | \
             jq -r '.items[0].id')
           echo "User ID: $BOUNDARY_USER_ID"
           
