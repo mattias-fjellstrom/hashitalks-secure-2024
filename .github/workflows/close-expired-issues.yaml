@@ -21,6 +21,8 @@ jobs:
             const issues = await github.paginate(opts)
             
             for (const issue of issues) {
+              console.log(issue)
+              console.log("-----------------------------")
               await github.rest.issues.update({
                 owner: issue.owner,
                 repo: issue.repo,
