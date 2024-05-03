@@ -24,8 +24,8 @@ jobs:
               console.log(issue)
               console.log("-----------------------------")
               await github.rest.issues.update({
-                owner: issue.owner,
-                repo: issue.repo,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 issue_number: issue.number,
                 state: 'closed'
               })
