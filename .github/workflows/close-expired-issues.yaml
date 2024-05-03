@@ -1,3 +1,5 @@
+name: Close expired access requests
+
 on:
   schedule:
     - cron: '*/5 * * * *'
