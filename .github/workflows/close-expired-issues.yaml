@@ -26,7 +26,7 @@ jobs:
               await github.rest.issues.update({
                 owner: issue.owner,
                 repo: issue.repo,
-                issue_number: issue.issue_number,
+                issue_number: issue.number,
                 state: 'closed'
               })
             }
