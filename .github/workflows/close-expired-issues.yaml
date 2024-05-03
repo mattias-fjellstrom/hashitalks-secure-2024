@@ -1,6 +1,7 @@
 name: Close expired access requests
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '*/5 * * * *'
 
@@ -21,7 +22,9 @@ jobs:
             
             for (const issue of issues) {
               await github.rest.issues.update({
-                ...issue,
+                owner: issue.owner,
+                repo: issue.repo,
+                issue_number: issue.issue_number,
                 state: 'closed'
               })
             }

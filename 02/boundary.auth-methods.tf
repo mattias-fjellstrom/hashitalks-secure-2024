@@ -11,6 +11,7 @@ resource "boundary_auth_method_oidc" "provider" {
   api_url_prefix     = var.hcp_boundary_cluster_url
   claims_scopes      = ["groups"]
   prompts            = ["select_account"]
+  account_claim_maps = ["oid=sub"]
 }
 
 data "boundary_auth_method" "password" {
