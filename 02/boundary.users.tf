@@ -24,10 +24,16 @@ resource "boundary_user" "lambda" {
 }
 
 # OIDC accounts
-resource "boundary_account_oidc" "oncall" {
-  name           = "john-call"
-  description    = "OIDC account for John Call"
+resource "boundary_account_oidc" "hashitalks_john" {
+  name           = data.azuread_user.lane_buckwindow.mail_nickname
   auth_method_id = boundary_auth_method_oidc.provider.id
   issuer         = boundary_auth_method_oidc.provider.issuer
-  subject        = azuread_user.oncall.object_id
+  subject        = data.azuread_user.lane_buckwindow.object_id
+}
+
+resource "boundary_account_oidc" "margarete_gnaw" {
+  name           = data.azuread_user.margarete_gnaw.mail_nickname
+  auth_method_id = boundary_auth_method_oidc.provider.id
+  issuer         = boundary_auth_method_oidc.provider.issuer
+  subject        = data.azuread_user.margarete_gnaw.object_id
 }

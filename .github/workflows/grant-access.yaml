@@ -14,12 +14,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "GITHUB_EVENT_CONTEXT is $GITHUB_EVENT_CONTEXT"
-        env:
-          GITHUB_EVENT_CONTEXT:  ${{ toJson(github.event) }}
-      - run: |
-          echo "BODY: ${{ github.event.issue.body }}"
-          echo "USER: ${{ github.event.issue.user.login }}"
+          regex="([0-9]) hour"
+          if [[ ${{ github.event.issue.body }} =~ $regex ]]
+          then
+              hours="${BASH_REMATCH[1]}"
+              echo "Will give access for ${hours} hour(s)"
+          else
+              echo "Could not parse the number of hours, defaults to 1 hour"
+              hours=1
+          fi
+
+          regex="(aws.[a-z0-9].[a-z0-9])"
+          if [[ $inp =~ $regex ]]
+          then
+              target="${BASH_REMATCH[1]}"
+              echo "Will give access to target ${target}"
+          else
+              echo "Could not parse the target, exits"
+              exit 1
+          fi
+
+          echo "BOUNDARY_TARGET_ALIAS=$target" >> $GITHUB_ENV
+          echo "DELTA_TIME=$hours" >> $GITHUB_ENV
       - name: Install Boundary
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -40,14 +56,29 @@ jobs:
       - name: Configure access
         run: |
           # find the correct user
-          boundary users list \
-            -token env://BOUNDARY_TOKEN \
+          BOUNDARY_ACCOUNT_ID=$(boundary accounts list \
+            -token=env://BOUNDARY_TOKEN \
             -format=json \
-            -recursive \
-            -filter '"mattias.fjellstrom@gmail.com" in "/item/email"'
+            -auth-method-id=${{ vars.BOUNDARY_AUTH_METHOD_ID }} \
+            -filter '"${{ github.event.issue.user.login }}" in "/item/name"' | \
+            jq -r '.items[0].id')
           
-          # find the correct role
+          BOUNDARY_USER_ID=$(boundary users list \
+            -token=env://BOUNDARY_TOKEN \
+            -recursive \
+            -format=json \
+            -filter='"$BOUNDARY_ACCOUNT_ID" in "/item/primary_account_id"' | \
+            jq -r '.items[0].id')
+          
+          BOUNDARY_ROLE_ID=$(boundary roles list \
+            -token=env://BOUNDARY_TOKEN \
+            -recursive \
+            -format=json \
+            -filter='"${{ env.BOUNDARY_TARGET_ALIAS }}" in "/item/name"' | \
+            jq -r '.items[0].id')
+          
           # add principal to the role
+          boundary roles add-principals -id="$BOUNDARY_ROLE_ID" -principal="$BOUNDARY_USER_ID"
       - name: Post comment to issue confirming access
         uses: actions/github-script@v7
         with:
@@ -56,6 +87,6 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Access have been granted ✅'
+              body: 'Access have been granted ✅. Remove access in ${{ env.DELTA_TIME }} hours.'
             })
  

@@ -20,6 +20,12 @@ resource "github_actions_variable" "boundary_addr" {
   value         = var.hcp_boundary_cluster_url
 }
 
+resource "github_actions_variable" "boundary_auth_method_id" {
+  repository    = data.github_repository.this.name
+  variable_name = "BOUNDARY_AUTH_METHOD_ID"
+  value         = boundary_auth_method_oidc.provider.id
+}
+
 resource "github_issue_label" "boundary" {
   color      = "EC585D"
   name       = "boundary"

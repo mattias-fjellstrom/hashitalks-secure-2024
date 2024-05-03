@@ -1,67 +1,29 @@
 data "azuread_client_config" "current" {}
 
 # USERS AND GROUPS -------------------------------------------------------------
-resource "azuread_user" "dba" {
-  user_principal_name = "dba@${var.entra_id_domain}"
-  display_name        = "David B. Andersson"
-  mail_nickname       = "dba"
-  password            = var.hcp_boundary_admin_password
+
+# User must exist in your Entra ID tenant
+data "azuread_user" "margarete_gnaw" {
+  user_principal_name = "margarete-gnaw@${var.entra_id_domain}"
 }
 
-resource "azuread_user" "sre" {
-  user_principal_name = "sre@${var.entra_id_domain}"
-  display_name        = "Sarah R. Ericson"
-  mail_nickname       = "sre"
-  password            = var.hcp_boundary_admin_password
+# User must exist in your Entra ID tenant
+data "azuread_user" "lane_buckwindow" {
+  user_principal_name = "lane-buckwindow@${var.entra_id_domain}"
 }
 
-resource "azuread_user" "k8s" {
-  user_principal_name = "k8s@${var.entra_id_domain}"
-  display_name        = "Kenny Eight Soleman"
-  mail_nickname       = "k8s"
-  password            = var.hcp_boundary_admin_password
-}
-
-resource "azuread_user" "oncall" {
-  user_principal_name = "oncall@${var.entra_id_domain}"
-  display_name        = "Jon Call"
-  mail_nickname       = "oncall"
-  password            = var.hcp_boundary_admin_password
-}
-
-resource "azuread_group" "dba" {
-  display_name     = "Database Administrators"
-  description      = "Handle anything to do with database administration"
-  security_enabled = true
-  members = [
-    azuread_user.dba.object_id
-  ]
-}
-
-resource "azuread_group" "sre" {
-  display_name     = "Site Reliability Engineers"
-  description      = "On-call engineers requiring specific access"
-  security_enabled = true
-  members = [
-    azuread_user.sre.object_id
-  ]
-}
-
-resource "azuread_group" "k8s" {
-  display_name     = "Kubernetes Administrators"
-  description      = "Handle Kubernetes cluster administration"
-  security_enabled = true
-  members = [
-    azuread_user.k8s.object_id
-  ]
+# Group must exist in your Entra ID tenant
+data "azuread_group" "all" {
+  display_name = "All Users"
 }
 
 resource "azuread_group" "oncall" {
-  display_name     = "On-call"
-  description      = "Engineers on-call"
+  display_name     = "On-Call Engineers"
   security_enabled = true
+
   members = [
-    azuread_user.oncall.object_id
+    data.azuread_user.lane_buckwindow.object_id,
+    data.azuread_user.margarete_gnaw.object_id,
   ]
 }
 
