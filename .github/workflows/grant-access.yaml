@@ -24,7 +24,7 @@ jobs:
               hours=1
           fi
 
-          regex="(aws.[a-z0-9].[a-z0-9])"
+          regex="(aws.[a-z0-9]+.[a-z0-9]+)"
           if [[ "${{ github.event.issue.body }}" =~ $regex ]]
           then
               target="${BASH_REMATCH[1]}"
