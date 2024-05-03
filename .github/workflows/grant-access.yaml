@@ -15,7 +15,7 @@ jobs:
     steps:
       - run: |
           regex="([0-9]) hour"
-          if [[ ${{ github.event.issue.body }} =~ $regex ]]
+          if [[ "${{ github.event.issue.body }}" =~ $regex ]]
           then
               hours="${BASH_REMATCH[1]}"
               echo "Will give access for ${hours} hour(s)"
@@ -25,7 +25,7 @@ jobs:
           fi
 
           regex="(aws.[a-z0-9].[a-z0-9])"
-          if [[ $inp =~ $regex ]]
+          if [[ "${{ github.event.issue.body }}" =~ $regex ]]
           then
               target="${BASH_REMATCH[1]}"
               echo "Will give access to target ${target}"
