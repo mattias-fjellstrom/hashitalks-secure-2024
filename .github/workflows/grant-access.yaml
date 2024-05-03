@@ -55,12 +55,14 @@ jobs:
           BOUNDARY_PASSWORD: ${{ secrets.BOUNDARY_PASSWORD }}
       - name: Configure access
         run: |
+          echo "::add-mask::$BOUNDARY_TOKEN"
+          
           # find the correct user
           BOUNDARY_ACCOUNT_ID=$(boundary accounts list \
             -token=env://BOUNDARY_TOKEN \
             -format=json \
             -auth-method-id=${{ vars.BOUNDARY_AUTH_METHOD_ID }} \
-            -filter '"${{ github.event.issue.user.login }}" in "/item/name"' | \
+            -filter '"/item/name" == "${{ github.event.issue.user.login }}"' | \
             jq -r '.items[0].id')
           echo "Account ID: $BOUNDARY_ACCOUNT_ID"
           
@@ -68,7 +70,7 @@ jobs:
             -token=env://BOUNDARY_TOKEN \
             -recursive \
             -format=json \
-            -filter="\"$BOUNDARY_ACCOUNT_ID\" in \"/item/primary_account_id\"" | \
+            -filter="\"/item/primary_account_id\" == \"$BOUNDARY_ACCOUNT_ID\"" | \
             jq -r '.items[0].id')
           echo "User ID: $BOUNDARY_USER_ID"
           
@@ -76,7 +78,7 @@ jobs:
             -token=env://BOUNDARY_TOKEN \
             -recursive \
             -format=json \
-            -filter='"${{ env.BOUNDARY_TARGET_ALIAS }}" in "/item/name"' | \
+            -filter='"/item/name" == "${{ env.BOUNDARY_TARGET_ALIAS }}"' | \
             jq -r '.items[0].id')
           echo "Role ID: $BOUNDARY_ROLE_ID"
           

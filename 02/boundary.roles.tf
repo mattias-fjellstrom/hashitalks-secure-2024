@@ -17,9 +17,8 @@ resource "boundary_role" "reader" {
 }
 
 resource "boundary_role" "ec2" {
-  name        = "aws.ec2"
-  description = "Allow connections to EC2 targets"
-  scope_id    = boundary_scope.project.id
+  name     = "aws.ec2"
+  scope_id = boundary_scope.project.id
   grant_strings = [
     "ids=${boundary_target.ec2.id};actions=read,authorize-session",
   ]
@@ -29,9 +28,8 @@ resource "boundary_role" "ec2" {
 }
 
 resource "boundary_role" "postgres_read" {
-  name        = "aws.postgres.read"
-  description = "Allow connections to Postgres read-targets"
-  scope_id    = boundary_scope.project.id
+  name     = "aws.postgres.read"
+  scope_id = boundary_scope.project.id
   grant_strings = [
     "ids=${boundary_target.read.id};actions=read,authorize-session",
   ]
@@ -40,12 +38,11 @@ resource "boundary_role" "postgres_read" {
   ]
 }
 
-resource "boundary_role" "postgres_readwrite" {
-  name        = "aws.postgres.readwrite"
-  description = "Allow connections to Postgres read/write-targets"
-  scope_id    = boundary_scope.project.id
+resource "boundary_role" "postgres_write" {
+  name     = "aws.postgres.write"
+  scope_id = boundary_scope.project.id
   grant_strings = [
-    "ids=${boundary_target.readwrite.id};actions=read,authorize-session",
+    "ids=${boundary_target.write.id};actions=read,authorize-session",
   ]
   grant_scope_ids = [
     boundary_scope.project.id,
@@ -83,7 +80,7 @@ resource "boundary_role" "github" {
   grant_strings = [
     "ids=${boundary_role.ec2.id};type=role;actions=read,list,add-principals,remove-principals",
     "ids=${boundary_role.postgres_read.id};type=role;actions=read,list,add-principals,remove-principals",
-    "ids=${boundary_role.postgres_readwrite.id};type=role;actions=read,list,add-principals,remove-principals",
+    "ids=${boundary_role.postgres_write.id};type=role;actions=read,list,add-principals,remove-principals",
     "type=user;actions=list",
     "ids=*;type=account;actions=read,list",
     "type=role;actions=list",

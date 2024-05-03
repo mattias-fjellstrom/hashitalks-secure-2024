@@ -15,7 +15,7 @@ body:
       options:
         - aws.ec2
         - aws.postgres.read
-        - aws.postgres.readwrite
+        - aws.postgres.write
       default: 0
     validations:
       required: true

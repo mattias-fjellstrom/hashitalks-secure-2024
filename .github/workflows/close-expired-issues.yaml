@@ -3,7 +3,7 @@ name: Close expired access requests
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 */6 * * *'
 
 jobs:
   close_issues:

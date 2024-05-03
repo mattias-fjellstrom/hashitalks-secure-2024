@@ -25,7 +25,7 @@ resource "boundary_alias_target" "ec2" {
   authorize_session_host_id = boundary_host_static.ec2.id
 }
 
-resource "boundary_target" "readwrite" {
+resource "boundary_target" "write" {
   type     = "tcp"
   name     = "aws-aurora-read/write"
   scope_id = boundary_scope.project.id
@@ -44,11 +44,11 @@ resource "boundary_target" "readwrite" {
   session_connection_limit = -1
 }
 
-resource "boundary_alias_target" "readwrite" {
-  name                      = "aws-postgres-readwrite"
+resource "boundary_alias_target" "write" {
+  name                      = "aws-postgres-write"
   scope_id                  = "global"
-  value                     = "aws.postgres.readwrite"
-  destination_id            = boundary_target.readwrite.id
+  value                     = "aws.postgres.write"
+  destination_id            = boundary_target.write.id
   authorize_session_host_id = boundary_host_static.postgres.id
 }
 
