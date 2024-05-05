@@ -13,3 +13,7 @@ This sample sets up a VPC in AWS with a public and a private subnet. In the priv
 To access the EC2 instance in the private subnet Boundary uses a multi-hop session where the traffic goes through both of the workers. Vault injects an SSH certificate into the session so that the users can successfully SSH into the instance. The users never see the SSH credentials, and the certificates are expired when the session ends.
 
 To access the Aurora instance running in the private subnet Boundary once again uses multi-hop sessions. There are two different targets set up for the Aurora postgres database. The first target is a read target and the other is a write target. For both targets Vault is brokering credentials to the user in the session. Vault configures a user as needed in the database, communicating privately with the database over the peering connection between HCP and AWS. For the read target a read-only user is created and credentials for this user is provided into the session. Likewise, for the write target a user with write-credentials is created and the credentials are provided into the session. Note that in this case Vault is doing credential brokering, and the user is able to see the brokered credentials.
+
+An overview of all the pieces is shown below:
+
+![architecture](assets/architecture.png)
