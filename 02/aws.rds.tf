@@ -1,9 +1,9 @@
 resource "aws_db_subnet_group" "this" {
   name = "aurora-subnet-group"
   subnet_ids = [
-    var.aws_private_subnets[0].id,
-    var.aws_private_subnets[1].id,
-    var.aws_private_subnets[2].id,
+    data.aws_subnet.private01.id,
+    data.aws_subnet.private02.id,
+    data.aws_subnet.private03.id,
   ]
 
   tags = {
@@ -14,7 +14,7 @@ resource "aws_db_subnet_group" "this" {
 resource "aws_security_group" "db" {
   name        = "aurora"
   description = "Security group for Aurora postgresql serverless cluster"
-  vpc_id      = var.aws_vpc.id
+  vpc_id      = data.aws_vpc.this.id
 
   tags = {
     Name = "Aurora DB"
@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "db_ingress_from_vault" {
   to_port   = 5432
 
   cidr_blocks = [
-    var.hcp_virtual_network_cidr,
+    data.hcp_hvn.this.cidr_block,
   ]
 }
 

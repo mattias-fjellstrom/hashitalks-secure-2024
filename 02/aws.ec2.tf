@@ -21,7 +21,7 @@ data "aws_ami" "ubuntu_ami" {
 resource "aws_security_group" "private_target" {
   name        = "private-target"
   description = "Security group for static private target"
-  vpc_id      = var.aws_vpc.id
+  vpc_id      = data.aws_vpc.this.id
 
   tags = {
     Name = "Static EC2 (private)"
@@ -81,7 +81,7 @@ resource "aws_security_group_rule" "target_egress_to_internet_443" {
 
 data "http" "public_key" {
   method = "GET"
-  url    = "${var.hcp_vault_cluster_public_url}/v1/ssh-client-signer/public_key"
+  url    = "${data.hcp_vault_cluster.this.vault_public_endpoint_url}/v1/ssh-client-signer/public_key"
   request_headers = {
     "X-Vault-Namespace" = "admin"
   }
@@ -135,12 +135,9 @@ resource "aws_instance" "private_target" {
   vpc_security_group_ids = [
     aws_security_group.private_target.id,
   ]
-  subnet_id                   = var.aws_private_subnets[0].id
+  subnet_id                   = data.aws_subnet.private01.id
   user_data_base64            = data.cloudinit_config.ec2.rendered
   associate_public_ip_address = false
-
-  # TODO delete
-  key_name = aws_key_pair.ec2.key_name
 
   tags = {
     Name = "Boundary Target (public)"

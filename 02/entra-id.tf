@@ -55,8 +55,8 @@ resource "azuread_application" "oidc" {
   group_membership_claims = ["All"]
 
   web {
-    redirect_uris = ["${var.hcp_boundary_cluster_url}/v1/auth-methods/oidc:authenticate:callback"]
-    logout_url    = "${var.hcp_boundary_cluster_url}:3000"
+    redirect_uris = ["${data.hcp_boundary_cluster.this.cluster_url}/v1/auth-methods/oidc:authenticate:callback"]
+    logout_url    = "${data.hcp_boundary_cluster.this.cluster_url}:3000"
   }
 }
 

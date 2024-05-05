@@ -2,6 +2,7 @@
 *.tfstate
 *.tfstate.backup
 *.tfvars
+.terraform.tfstate.lock.info
 *.pem
 *.env
 *.zip

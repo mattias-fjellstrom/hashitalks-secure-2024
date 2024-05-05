@@ -8,7 +8,7 @@ resource "boundary_auth_method_oidc" "provider" {
   client_secret      = azuread_application_password.oidc.value
   issuer             = "https://sts.windows.net/${data.azuread_client_config.current.tenant_id}/"
   signing_algorithms = ["RS256"]
-  api_url_prefix     = var.hcp_boundary_cluster_url
+  api_url_prefix     = data.hcp_boundary_cluster.this.cluster_url
   claims_scopes      = ["groups"]
   prompts            = ["select_account"]
   account_claim_maps = ["oid=sub"]

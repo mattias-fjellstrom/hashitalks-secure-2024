@@ -1,4 +1,4 @@
-name: New Boundary access request
+name: Boundary access request
 
 on:
   issues:
@@ -95,6 +95,6 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Access have been granted ✅\nAccess will be removed automatically in ${{ env.DELTA_TIME }} hours.'
+              body: 'Access has been granted ✅'
             })
  

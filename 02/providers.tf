@@ -25,6 +25,11 @@ terraform {
       version = "2.3.4"
     }
 
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "0.83.0"
+    }
+
     http = {
       source  = "hashicorp/http"
       version = "3.4.2"
@@ -72,16 +77,18 @@ provider "aws" {
 }
 
 provider "boundary" {
-  addr                   = var.hcp_boundary_cluster_url
+  addr                   = data.hcp_boundary_cluster.this.cluster_url
   auth_method_login_name = "admin"
   auth_method_password   = var.hcp_boundary_admin_password
 }
 
 provider "github" {
-  owner = "mattias-fjellstrom-org"
+  owner = var.github_organization
 }
 
+provider "hcp" {}
+
 provider "vault" {
-  address = var.hcp_vault_cluster_public_url
+  address = data.hcp_vault_cluster.this.vault_public_endpoint_url
   token   = var.hcp_vault_admin_token
 }

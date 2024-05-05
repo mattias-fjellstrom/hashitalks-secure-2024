@@ -17,7 +17,7 @@ resource "github_actions_secret" "boundary_password" {
 resource "github_actions_variable" "boundary_addr" {
   repository    = data.github_repository.this.name
   variable_name = "BOUNDARY_ADDR"
-  value         = var.hcp_boundary_cluster_url
+  value         = data.hcp_boundary_cluster.this.cluster_url
 }
 
 resource "github_actions_variable" "boundary_auth_method_id" {

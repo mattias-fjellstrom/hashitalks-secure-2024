@@ -83,5 +83,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Access have been removed ❌'
+              body: 'Access has been removed ❌'
             })

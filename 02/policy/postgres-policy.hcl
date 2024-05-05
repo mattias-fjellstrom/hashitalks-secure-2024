@@ -2,6 +2,6 @@ path "database/creds/read" {
   capabilities = ["read"]
 }
 
-path "database/creds/readwrite" {
+path "database/creds/write" {
   capabilities = ["read"]
 }

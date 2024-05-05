@@ -59,14 +59,14 @@ resource "vault_database_secrets_mount" "postgres" {
     max_open_connections = 5
 
     allowed_roles = [
-      "readwrite",
+      "write",
       "read",
     ]
   }
 }
 
-resource "vault_database_secret_backend_role" "readwrite" {
-  name    = "readwrite"
+resource "vault_database_secret_backend_role" "write" {
+  name    = "write"
   backend = vault_database_secrets_mount.postgres.path
   db_name = vault_database_secrets_mount.postgres.postgresql[0].name
 

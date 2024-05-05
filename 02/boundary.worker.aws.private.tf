@@ -7,7 +7,7 @@ resource "boundary_worker" "private" {
 resource "aws_security_group" "private_worker" {
   name        = "private-worker"
   description = "Security group for private worker"
-  vpc_id      = var.aws_vpc.id
+  vpc_id      = data.aws_vpc.this.id
 
   tags = {
     Name = "private-worker"
@@ -23,7 +23,7 @@ resource "aws_security_group_rule" "private_egress_to_vault" {
   from_port = 8200
   to_port   = 8200
   cidr_blocks = [
-    var.hcp_virtual_network_cidr,
+    data.hcp_hvn.this.cidr_block,
   ]
 }
 
@@ -109,7 +109,7 @@ module "private_worker" {
   source = "./modules/worker/aws"
 
   aws_region            = var.aws_region
-  aws_subnet            = var.aws_private_subnets[0]
+  aws_subnet            = data.aws_subnet.private01
   aws_security_group_id = aws_security_group.private_worker.id
 
   aws_instance_associate_public_ip_address = false

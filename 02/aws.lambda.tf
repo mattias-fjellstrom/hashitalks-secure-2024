@@ -49,7 +49,7 @@ resource "aws_lambda_function" "boundary" {
 
   environment {
     variables = {
-      BOUNDARY_ADDR             = var.hcp_boundary_cluster_url
+      BOUNDARY_ADDR             = data.hcp_boundary_cluster.this.cluster_url
       BOUNDARY_USERNAME         = boundary_account_password.lambda.login_name
       BOUNDARY_PASSWORD         = boundary_account_password.lambda.password
       BOUNDARY_AUTH_METHOD_ID   = data.boundary_auth_method.password.id

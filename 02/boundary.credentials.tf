@@ -11,7 +11,7 @@ resource "boundary_credential_store_vault" "ec2" {
   scope_id = boundary_scope.project.id
 
   # vault settings
-  address   = var.hcp_vault_cluster_private_url
+  address   = data.hcp_vault_cluster.this.vault_private_endpoint_url
   token     = vault_token.ec2.client_token
   namespace = "admin"
 
@@ -41,7 +41,7 @@ resource "boundary_credential_store_vault" "db" {
   scope_id = boundary_scope.project.id
 
   # vault settings
-  address   = var.hcp_vault_cluster_private_url
+  address   = data.hcp_vault_cluster.this.vault_private_endpoint_url
   namespace = "admin"
   token     = vault_token.postgres.client_token
 
@@ -53,10 +53,10 @@ resource "boundary_credential_store_vault" "db" {
   ]
 }
 
-resource "boundary_credential_library_vault" "readwrite" {
-  name                = "read/write"
+resource "boundary_credential_library_vault" "write" {
+  name                = "write"
   credential_store_id = boundary_credential_store_vault.db.id
-  path                = "database/creds/readwrite"
+  path                = "database/creds/write"
 }
 
 resource "boundary_credential_library_vault" "read" {

@@ -31,14 +31,14 @@ resource "boundary_alias_target" "ec2" {
 
 resource "boundary_target" "write" {
   type     = "tcp"
-  name     = "aws-aurora-read/write"
+  name     = "aws-aurora-write"
   scope_id = boundary_scope.project.id
 
   ingress_worker_filter = "\"public\" in \"/tags/subnet\""
   egress_worker_filter  = "\"private\" in \"/tags/subnet\""
 
   brokered_credential_source_ids = [
-    boundary_credential_library_vault.readwrite.id
+    boundary_credential_library_vault.write.id
   ]
   host_source_ids = [
     boundary_host_set_static.aurora.id,

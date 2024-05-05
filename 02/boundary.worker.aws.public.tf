@@ -7,7 +7,7 @@ resource "boundary_worker" "public" {
 resource "aws_security_group" "public_worker" {
   name        = "public-worker"
   description = "Security group for public worker"
-  vpc_id      = var.aws_vpc.id
+  vpc_id      = data.aws_vpc.this.id
 
   tags = {
     Name = "public-worker"
@@ -80,7 +80,7 @@ resource "aws_security_group_rule" "public_egress_to_internet_443" {
 locals {
   public_worker_config = templatefile("./templates/worker.hcl.tftpl", {
     is_ingress                            = true
-    hcp_boundary_cluster_id               = split(".", split("//", var.hcp_boundary_cluster_url)[1])[0]
+    hcp_boundary_cluster_id               = split(".", split("//", data.hcp_boundary_cluster.this.cluster_url)[1])[0]
     audit_enabled                         = true
     observations_enabled                  = true
     sysevents_enabled                     = true
@@ -101,7 +101,7 @@ module "public_worker" {
   source = "./modules/worker/aws"
 
   aws_region            = var.aws_region
-  aws_subnet            = var.aws_public_subnets[0]
+  aws_subnet            = data.aws_subnet.public01
   aws_security_group_id = aws_security_group.public_worker.id
 
   aws_instance_associate_public_ip_address = true
