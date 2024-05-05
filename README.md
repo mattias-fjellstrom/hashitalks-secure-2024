@@ -1,45 +1,15 @@
 # HashiTalks Secure 2024
 
+> This is the accompanying repository for my session **Unlocking Privileged Access Management: HCP Boundary with Terraform** from [HashiTalks Secure 2024](https://events.hashicorp.com/hashitalkssecure).
+>
+> The setup of my exact demo scenario has many prerequisites for it to be successful, thus you should use this repository as a guide to see how things are set up in Boundary using Terraform. No demo can be directly applicable to your specific real-world scenario, so be inspired but adjust the samples to your situation!
+
 This repository contains sample Terraform configuration for setting up HCP Boundary with HCP Vault for securely accessing resources in AWS.
 
 ## Summary
 
 This sample sets up a VPC in AWS with a public and a private subnet. In the private subnet an EC2 instance and a serverless Aurora cluster is set up. In both of the subnets a Boundary worker EC2 instance is deployed. An HCP Boundary cluster and an HCP Vault cluster is also set up. The HCP Vault cluster is placed in a HVN that is peered with the AWS VPC to provide private access to Vault from AWS.
 
-## Instructions
+To access the EC2 instance in the private subnet Boundary uses a multi-hop session where the traffic goes through both of the workers. Vault injects an SSH certificate into the session so that the users can successfully SSH into the instance. The users never see the SSH credentials, and the certificates are expired when the session ends.
 
-Follow the steps below to set up the sample infrastructure.
-
-1. Go to the [01](./01/) directory and create a file named `<something>.auto.tfvars` (e.g. `main.auto.tfvars`) with the following content:
-    ```hcl
-    aws_region                  = "eu-central-1" # see variables.tf for valid regions
-    aws_vpc_cidr_block          = "10.0.0.0/16" # replace if you want
-    hcp_boundary_admin_password = "MySecretPasswordForBoundary123" # replace me
-    hcp_virtual_network_cidr    = "192.168.100.0/24" # replace if you want (must not coincide with the aws_vpc_cidr_block variable)
-1. While in the [01](./01/) directory run `terraform apply`, the apply will take approximately 10 minutes.
-1. Go to the [02](./02/) directory and create a file named `<something>.auto.tfvars` (e.g. `main.auto.tfvars`) with the following content:
-    ```hcl
-    aws_rds_master_password     = "MySecretPasswordForRdsDatabase123" # replace me
-    aws_region                  = "eu-central-1" # use same values as in the first Terraform configuration
-    entra_id_domain             = "<your custom domain>" # your Entra ID custom domain name
-    github_organization         = "<organization name>" # name of your github organization
-    hcp_boundary_admin_password = "MySecretPasswordForBoundary123" # use same values as in the first Terraform configuration
-    hcp_virtual_network_cidr    = "192.168.100.0/24" # use same values as in the first Terraform configuration
-    hcp_vault_admin_token       = "<token from ../01/vault.env>"
-    ```
-1. While in the [02](./02/) directory run `terraform apply`, the apply will take approximately 15 minutes.
-
-## Cleanup
-
-Note, due to an issue with the Vault database secrets engine you must manually clear away any leases and disable the secrets engine before you run `terraform destroy`.
-
-1. Export the values from [01/vault.env](./01/vault.env) as environment variables.
-1. Run `vault lease revoke -force -prefix database/`
-1. Run `vault secrets disable database`
-
-Now you can proceed with destroying the infrastructure:
-
-1. While in the [02](./02) directory, run `terraform destroy`. Wait for the destroy operation to finish.
-1. Go to the [01](./01) directory and run `terraform destroy`. Wait for the destroy operation to finish.
-
-Remove any other resources you no longer need (AWS credentials, GitHub repos, Entra ID users, etc.)
+To access the Aurora instance running in the private subnet Boundary once again uses multi-hop sessions. There are two different targets set up for the Aurora postgres database. The first target is a read target and the other is a write target. For both targets Vault is brokering credentials to the user in the session. Vault configures a user as needed in the database, communicating privately with the database over the peering connection between HCP and AWS. For the read target a read-only user is created and credentials for this user is provided into the session. Likewise, for the write target a user with write-credentials is created and the credentials are provided into the session. Note that in this case Vault is doing credential brokering, and the user is able to see the brokered credentials.
