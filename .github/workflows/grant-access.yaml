@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   provide-access:
+    environment: boundary
     env:
       BOUNDARY_ADDR: ${{ vars.BOUNDARY_ADDR }}
     runs-on: ubuntu-latest
