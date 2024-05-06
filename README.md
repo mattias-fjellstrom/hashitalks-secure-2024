@@ -4,6 +4,8 @@
 >
 > The setup of my exact demo scenario has many prerequisites for it to be successful, thus you should use this repository as a guide to see how things are set up in Boundary using Terraform. No demo can be directly applicable to your specific real-world scenario, so be inspired but adjust the samples to your situation!
 
+![header](assets/header.png)
+
 This repository contains sample Terraform configuration for setting up HCP Boundary with HCP Vault for securely accessing resources in AWS.
 
 ## Summary
