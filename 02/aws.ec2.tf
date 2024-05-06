@@ -130,16 +130,13 @@ data "cloudinit_config" "ec2" {
 }
 
 resource "aws_instance" "private_target" {
-  ami           = data.aws_ami.ubuntu_ami.id
-  instance_type = "t3.micro"
-  vpc_security_group_ids = [
-    aws_security_group.private_target.id,
-  ]
+  ami                         = data.aws_ami.ubuntu_ami.id
+  instance_type               = "t3.micro"
+  vpc_security_group_ids      = [aws_security_group.private_target.id]
   subnet_id                   = data.aws_subnet.private01.id
   user_data_base64            = data.cloudinit_config.ec2.rendered
   associate_public_ip_address = false
-
   tags = {
-    Name = "Boundary Target (public)"
+    Name = "Boundary Target"
   }
 }

@@ -1,3 +1,4 @@
+# END-USER ROLES -------------------------------------------------------------------------------------------------------
 resource "boundary_role" "reader" {
   name        = "reader"
   description = "Basic reader role for all managed groups"
@@ -8,8 +9,7 @@ resource "boundary_role" "reader" {
     "ids=*;type=auth-token;actions=list,read:self,delete:self",
   ]
   grant_scope_ids = [
-    boundary_scope.organization.id,
-    boundary_scope.project.id,
+    "this", "descendants"
   ]
   principal_ids = [
     boundary_managed_group.all.id,
@@ -23,7 +23,7 @@ resource "boundary_role" "ec2" {
     "ids=${boundary_target.ec2.id};actions=read,authorize-session",
   ]
   grant_scope_ids = [
-    boundary_scope.project.id,
+    "this",
   ]
 }
 
@@ -34,7 +34,7 @@ resource "boundary_role" "postgres_read" {
     "ids=${boundary_target.read.id};actions=read,authorize-session",
   ]
   grant_scope_ids = [
-    boundary_scope.project.id,
+    "this",
   ]
 }
 
@@ -45,7 +45,7 @@ resource "boundary_role" "postgres_write" {
     "ids=${boundary_target.write.id};actions=read,authorize-session",
   ]
   grant_scope_ids = [
-    boundary_scope.project.id,
+    "this",
   ]
 }
 
@@ -57,10 +57,11 @@ resource "boundary_role" "oncall" {
     "ids=*;type=target;actions=read,authorize-session",
   ]
   grant_scope_ids = [
-    boundary_scope.project.id,
+    "this", "descendants"
   ]
 }
 
+# AUTOMATION ROLES -----------------------------------------------------------------------------------------------------
 resource "boundary_role" "lambda" {
   name        = "aws-lambda-admin"
   description = "Role for AWS Lambda to administer the on-call role assignment"
@@ -81,16 +82,15 @@ resource "boundary_role" "github" {
     "ids=${boundary_role.ec2.id};type=role;actions=read,list,add-principals,remove-principals",
     "ids=${boundary_role.postgres_read.id};type=role;actions=read,list,add-principals,remove-principals",
     "ids=${boundary_role.postgres_write.id};type=role;actions=read,list,add-principals,remove-principals",
-    "type=user;actions=list",
+    "ids=*;type=user;actions=list,read",
     "ids=*;type=account;actions=read,list",
     "type=role;actions=list",
-    "ids=*;type=*;actions=*"
   ]
   principal_ids = [
     boundary_user.github.id,
   ]
   grant_scope_ids = [
-    boundary_scope.organization.id,
-    boundary_scope.project.id,
+    "this",
+    "descendants",
   ]
 }

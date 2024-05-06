@@ -54,21 +54,20 @@ resource "aws_lambda_function" "boundary" {
       BOUNDARY_PASSWORD         = boundary_account_password.lambda.password
       BOUNDARY_AUTH_METHOD_ID   = data.boundary_auth_method.password.id
       BOUNDARY_ON_CALL_ROLE_ID  = boundary_role.oncall.id
-      BOUNDARY_ON_CALL_GROUP_ID = azuread_group.oncall.object_id
+      BOUNDARY_ON_CALL_GROUP_ID = boundary_managed_group.oncall.id
     }
   }
 }
 
-resource "aws_lambda_permission" "name" {
+resource "aws_lambda_permission" "cloudwatch" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.boundary.function_name
   principal     = "lambda.alarms.cloudwatch.amazonaws.com"
 }
 
-resource "aws_cloudwatch_metric_alarm" "trigger" {
-  alarm_name      = "ec2-cpu-alarm"
-  actions_enabled = true
+resource "aws_cloudwatch_metric_alarm" "ec2_cpu" {
+  alarm_name = "ec2-cpu-alarm"
 
   namespace   = "AWS/EC2"
   metric_name = "CPUUtilization"
@@ -84,7 +83,7 @@ resource "aws_cloudwatch_metric_alarm" "trigger" {
   period              = 60
   treat_missing_data  = "notBreaching"
 
-  # trigger the Boundary lambda function for all state changes
+  actions_enabled           = true
   ok_actions                = [aws_lambda_function.boundary.arn]
   alarm_actions             = [aws_lambda_function.boundary.arn]
   insufficient_data_actions = [aws_lambda_function.boundary.arn]

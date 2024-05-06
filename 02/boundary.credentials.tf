@@ -7,15 +7,13 @@ resource "time_sleep" "wait_for_workers" {
 }
 
 resource "boundary_credential_store_vault" "ec2" {
-  name     = "boudary-vault-credential-store-ec2"
+  name     = "boundary-vault-credential-store-ssh"
   scope_id = boundary_scope.project.id
 
-  # vault settings
   address   = data.hcp_vault_cluster.this.vault_private_endpoint_url
   namespace = "admin"
   token     = vault_token.ec2.client_token
 
-  # make sure only workers with access to Vault are used for this credential store
   worker_filter = "\"true\" in \"/tags/vault\""
 
   depends_on = [
@@ -36,16 +34,14 @@ resource "boundary_credential_library_vault_ssh_certificate" "ec2" {
   }
 }
 
-resource "boundary_credential_store_vault" "db" {
-  name     = "boudary-vault-credential-store-db"
+resource "boundary_credential_store_vault" "postgres" {
+  name     = "boundary-vault-credential-store-postgres"
   scope_id = boundary_scope.project.id
 
-  # vault settings
   address   = data.hcp_vault_cluster.this.vault_private_endpoint_url
   namespace = "admin"
   token     = vault_token.postgres.client_token
 
-  # make sure only workers with access to Vault are used for this credential store
   worker_filter = "\"true\" in \"/tags/vault\""
 
   depends_on = [
@@ -55,12 +51,24 @@ resource "boundary_credential_store_vault" "db" {
 
 resource "boundary_credential_library_vault" "write" {
   name                = "write"
-  credential_store_id = boundary_credential_store_vault.db.id
+  credential_store_id = boundary_credential_store_vault.postgres.id
   path                = "database/creds/write"
 }
 
 resource "boundary_credential_library_vault" "read" {
   name                = "read"
-  credential_store_id = boundary_credential_store_vault.db.id
+  credential_store_id = boundary_credential_store_vault.postgres.id
   path                = "database/creds/read"
+}
+
+# BOUNDARY STATIC CREDENTIAL STORE -------------------------------------------------------------------------------------
+resource "boundary_credential_store_static" "internal" {
+  name     = "boundary-credential-store-static"
+  scope_id = boundary_scope.project.id
+}
+
+resource "boundary_credential_json" "dummy" {
+  name                = "boundary-credentials-json"
+  credential_store_id = boundary_credential_store_static.internal.id
+  object              = file("./secrets/dummy.json")
 }

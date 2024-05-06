@@ -1,3 +1,4 @@
+# AWS LAMBDA -----------------------------------------------------------------------------------------------------------
 resource "random_password" "lambda" {
   upper   = true
   lower   = true
@@ -23,7 +24,7 @@ resource "boundary_user" "lambda" {
   ]
 }
 
-# GITHUB
+# GITHUB ---------------------------------------------------------------------------------------------------------------
 resource "random_password" "github" {
   upper   = true
   lower   = true
@@ -47,7 +48,7 @@ resource "boundary_user" "github" {
   ]
 }
 
-# OIDC accounts
+# OIDC ACCOUNTS --------------------------------------------------------------------------------------------------------
 resource "boundary_account_oidc" "hashitalks_john" {
   name           = data.azuread_user.lane_buckwindow.mail_nickname
   auth_method_id = boundary_auth_method_oidc.provider.id

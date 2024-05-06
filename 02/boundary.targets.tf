@@ -12,14 +12,16 @@ resource "boundary_target" "ec2" {
   injected_application_credential_source_ids = [
     boundary_credential_library_vault_ssh_certificate.ec2.id,
   ]
+  brokered_credential_source_ids = [
+    boundary_credential_json.dummy.id,
+  ]
 
   default_port             = 22
   session_connection_limit = -1
   session_max_seconds      = 3600
 
-  # uncomment to enable session recording
-  #   enable_session_recording = true
-  #   storage_bucket_id        = boundary_storage_bucket.session_recording.id
+  enable_session_recording = true
+  storage_bucket_id        = boundary_storage_bucket.session_recording.id
 }
 
 resource "boundary_alias_target" "ec2" {

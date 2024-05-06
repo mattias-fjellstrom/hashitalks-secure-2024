@@ -8,3 +8,4 @@
 *.zip
 bootstrap
 .DS_Store
+*.tfplan

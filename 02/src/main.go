@@ -98,6 +98,7 @@ func RevokeOnCallRole(c *api.Client) error {
 // HandleAlert is the Lambda function handler function that triggers the correct action based on the alarm
 func HandleAlert(ctx context.Context, event CloudWatchAlarmEvent) error {
 	if event.AlarmData.State.Value == "INSUFFICIENT_DATA" {
+		log.Println("No action required")
 		return nil
 	}
 
@@ -107,6 +108,7 @@ func HandleAlert(ctx context.Context, event CloudWatchAlarmEvent) error {
 	}
 
 	if event.AlarmData.State.Value == "ALARM" {
+		log.Println("Assigning principal to on-call role")
 		err = AssignOnCallRole(client)
 		if err != nil {
 			return errors.New("could not assign role to user")
@@ -114,6 +116,7 @@ func HandleAlert(ctx context.Context, event CloudWatchAlarmEvent) error {
 	}
 
 	if event.AlarmData.State.Value == "OK" {
+		log.Println("Removing principal from on-call role")
 		err = RevokeOnCallRole(client)
 		if err != nil {
 			return errors.New("could not revoke role from user")

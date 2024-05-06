@@ -1,9 +1,4 @@
-resource "boundary_worker" "private" {
-  scope_id                    = "global"
-  name                        = "private-worker"
-  worker_generated_auth_token = ""
-}
-
+# NETWORKING -----------------------------------------------------------------------------------------------------------
 resource "aws_security_group" "private_worker" {
   name        = "private-worker"
   description = "Security group for private worker"
@@ -84,6 +79,13 @@ resource "aws_security_group_rule" "private_egress_to_internet_443" {
   cidr_blocks = [
     "0.0.0.0/0",
   ]
+}
+
+# WORKER INSTANCE ------------------------------------------------------------------------------------------------------
+resource "boundary_worker" "private" {
+  scope_id                    = "global"
+  name                        = "private-worker"
+  worker_generated_auth_token = ""
 }
 
 locals {

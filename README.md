@@ -19,3 +19,13 @@ To access the Aurora instance running in the private subnet Boundary once again 
 An overview of all the pieces is shown below:
 
 ![architecture](assets/architecture.png)
+
+Most current features of Boundary is present in this sample (as of May 2024) including:
+
+- workers
+- auth-methods, managed groups, users, accounts, roles
+- scopes
+- session recordings and storage policies
+- credential stores and libraries
+- host catalogs, host sets, hosts (not dynamic host sets)
+- targets and aliases (new as of April 2024)
