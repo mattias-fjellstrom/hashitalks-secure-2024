@@ -1,30 +1,12 @@
-variable "aws_region" {
-  description = "AWS region name"
-  type        = string
-}
-
-# variable "aws_private_subnets" {
-#   description = "List of private subnets"
-#   type = list(object({
-#     id                = string
-#     availability_zone = string
-#     cidr_block        = string
-#   }))
-# }
-
-# variable "aws_public_subnets" {
-#   description = "List of public subnets"
-#   type = list(object({
-#     id                = string
-#     availability_zone = string
-#     cidr_block        = string
-#   }))
-# }
-
 variable "aws_rds_master_password" {
   description = "Master password for the RDS database"
   type        = string
   sensitive   = true
+}
+
+variable "aws_region" {
+  description = "AWS region name"
+  type        = string
 }
 
 variable "entra_id_domain" {

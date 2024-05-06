@@ -27,7 +27,7 @@ variable "aws_vpc_cidr_block" {
 
 
 variable "hcp_boundary_admin_password" {
-  description = "Boundary initial admin password"
+  description = "Boundary initial admin password (username will be admin)"
   type        = string
   sensitive   = true
 }

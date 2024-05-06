@@ -16,6 +16,7 @@ resource "boundary_target" "ec2" {
   default_port             = 22
   session_connection_limit = -1
   session_max_seconds      = 3600
+
   # uncomment to enable session recording
   #   enable_session_recording = true
   #   storage_bucket_id        = boundary_storage_bucket.session_recording.id

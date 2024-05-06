@@ -3,6 +3,7 @@ resource "vault_policy" "boundary_controller" {
   policy = file("policy/boundary-controller-policy.hcl")
 }
 
+# EC2 ------------------------------------------------------------------------------------------------------------------
 resource "vault_policy" "ssh" {
   name   = "ssh"
   policy = file("policy/ssh-policy.hcl")

@@ -120,7 +120,7 @@ data "cloudinit_config" "ec2" {
       sudo apt update
       sudo apt install -y stress rand
 
-      # random sleep between 0 and 900 seconds to simulate an issue
+      # random sleep between 0 and 900 seconds to simulate an issue occuring randomly
       sleep $(rand -M 900)
 
       # stress all cpus for ten minutes

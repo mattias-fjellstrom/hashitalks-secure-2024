@@ -12,8 +12,8 @@ resource "boundary_credential_store_vault" "ec2" {
 
   # vault settings
   address   = data.hcp_vault_cluster.this.vault_private_endpoint_url
-  token     = vault_token.ec2.client_token
   namespace = "admin"
+  token     = vault_token.ec2.client_token
 
   # make sure only workers with access to Vault are used for this credential store
   worker_filter = "\"true\" in \"/tags/vault\""
