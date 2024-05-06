@@ -7,3 +7,4 @@
 *.env
 *.zip
 bootstrap
+.DS_Store
