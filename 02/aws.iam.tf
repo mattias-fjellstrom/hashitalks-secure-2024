@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "session_recording" {
       "s3:GetObject",
       "s3:GetObjectAttributes",
       "s3:DeleteObject",
-      "s3:ListBucket"
+      "s3:ListBucket",
     ]
 
     resources = [

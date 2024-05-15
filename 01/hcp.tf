@@ -1,4 +1,19 @@
-# NETWORKING -------------------------------------------------------------------
+# BOUNDARY -------------------------------------------------------------------------------------------------------------
+resource "hcp_boundary_cluster" "this" {
+  cluster_id = "aws-boundary"
+  username   = "admin"
+  password   = var.hcp_boundary_admin_password
+  tier       = "Plus"
+
+  maintenance_window_config {
+    day          = "TUESDAY"
+    start        = 2
+    end          = 12
+    upgrade_type = "SCHEDULED"
+  }
+}
+
+# HVN ------------------------------------------------------------------------------------------------------------------
 resource "hcp_hvn" "this" {
   hvn_id         = "hvn-aws-${var.aws_region}"
   cidr_block     = var.hcp_virtual_network_cidr
@@ -26,7 +41,7 @@ resource "aws_vpc_peering_connection_accepter" "this" {
   auto_accept               = true
 }
 
-# VAULT ------------------------------------------------------------------------
+# VAULT ----------------------------------------------------------------------------------------------------------------
 resource "hcp_vault_cluster" "this" {
   cluster_id      = "vault-aws-${var.aws_region}"
   hvn_id          = hcp_hvn.this.hvn_id
@@ -36,19 +51,4 @@ resource "hcp_vault_cluster" "this" {
 
 resource "hcp_vault_cluster_admin_token" "this" {
   cluster_id = hcp_vault_cluster.this.cluster_id
-}
-
-# BOUNDARY ---------------------------------------------------------------------
-resource "hcp_boundary_cluster" "this" {
-  cluster_id = "aws-boundary"
-  username   = "admin"
-  password   = var.hcp_boundary_admin_password
-  tier       = "Plus"
-
-  maintenance_window_config {
-    day          = "TUESDAY"
-    start        = 2
-    end          = 12
-    upgrade_type = "SCHEDULED"
-  }
 }

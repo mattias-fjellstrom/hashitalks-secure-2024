@@ -9,3 +9,5 @@
 bootstrap
 .DS_Store
 *.tfplan
+NOTES.md
+vault.sh

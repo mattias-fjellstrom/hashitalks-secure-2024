@@ -31,3 +31,21 @@ resource "github_issue_label" "boundary" {
   repository = data.github_repository.this.name
   color      = "EC585D"
 }
+
+data "github_user" "current" {
+  username = ""
+}
+
+resource "github_repository_environment" "boundary" {
+  environment = "boundary"
+  repository  = data.github_repository.this.name
+
+  prevent_self_review = true
+  can_admins_bypass   = true
+
+  reviewers {
+    users = [
+      data.github_user.current.id,
+    ]
+  }
+}

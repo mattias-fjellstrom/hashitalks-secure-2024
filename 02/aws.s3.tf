@@ -1,5 +1,5 @@
 resource "random_pet" "bucket" {
-  length = 7
+  length = 2
 }
 
 resource "aws_s3_bucket" "session_recording" {

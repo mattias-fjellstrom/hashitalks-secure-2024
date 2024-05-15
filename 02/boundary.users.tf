@@ -49,7 +49,7 @@ resource "boundary_user" "github" {
 }
 
 # OIDC ACCOUNTS --------------------------------------------------------------------------------------------------------
-resource "boundary_account_oidc" "hashitalks_john" {
+resource "boundary_account_oidc" "lane_buckwindow" {
   name           = data.azuread_user.lane_buckwindow.mail_nickname
   auth_method_id = boundary_auth_method_oidc.provider.id
   issuer         = boundary_auth_method_oidc.provider.issuer

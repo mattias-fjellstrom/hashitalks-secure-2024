@@ -33,7 +33,8 @@ WORKER_SERVICE_CONFIG
     ]
   }
 
-  source_for_ip = var.aws_instance_associate_public_ip_address ? "https://api.ipify.org?format=txt" : "http://169.254.169.254/latest/meta-data/local-ipv4"
+  ip_meta_data_key = var.aws_instance_associate_public_ip_address ? "public" : "local"
+  source_for_ip    = "http://169.254.169.254/latest/meta-data/${local.ip_meta_data_key}-ipv4"
 }
 
 data "cloudinit_config" "boundary_worker" {
@@ -71,7 +72,6 @@ data "cloudinit_config" "boundary_worker" {
     content      = <<-EOF
       #!/bin/bash
 
-      # boundary
       sudo systemctl daemon-reload
       sudo systemctl enable boundary
       sudo systemctl start boundary

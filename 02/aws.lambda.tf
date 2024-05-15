@@ -39,7 +39,7 @@ data "archive_file" "lambda" {
 
 resource "aws_lambda_function" "boundary" {
   function_name    = "on-call-alarms"
-  description      = "Assign or revoke the on-call role for the on-call user in Boundary"
+  description      = "Manage the on-call role in Boundary"
   role             = aws_iam_role.lambda.arn
   handler          = "bootstrap"
   runtime          = "provided.al2023"

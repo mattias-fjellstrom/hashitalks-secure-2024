@@ -14,7 +14,7 @@ resource "boundary_scope" "project" {
   auto_create_default_role = true
 }
 
-# EMPTY SCOPES FOR ILLUSTRATIVE PURPUSE
+# EMPTY SCOPES FOR ILLUSTRATIVE PURPUSE --------------------------------------------------------------------------------
 resource "boundary_scope" "gcp" {
   scope_id                 = boundary_scope.organization.id
   name                     = "gcp-resources"

@@ -106,16 +106,16 @@ resource "vault_database_secret_backend_role" "read" {
   max_ttl     = 300
 }
 
-resource "vault_policy" "aurora_database" {
-  name   = "postgres-database"
+resource "vault_policy" "database" {
+  name   = "database"
   policy = file("policy/postgres-policy.hcl")
 }
 
 resource "vault_token" "postgres" {
   display_name = "postgres"
   policies = [
-    "boundary-controller", # manage token
-    "postgres-database",   # work with the postgres secrets engine
+    vault_policy.boundary_controller.name, # manage token
+    vault_policy.database.name,            # work with the postgres secrets engine
   ]
 
   no_default_policy = true

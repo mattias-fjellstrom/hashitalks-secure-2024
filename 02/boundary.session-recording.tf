@@ -11,6 +11,11 @@ resource "boundary_storage_bucket" "session_recording" {
   })
 
   worker_filter = "\"public\" in \"/tags/subnet\""
+
+  depends_on = [
+    module.public_worker,
+    module.private_worker,
+  ]
 }
 
 resource "boundary_policy_storage" "session_recording" {

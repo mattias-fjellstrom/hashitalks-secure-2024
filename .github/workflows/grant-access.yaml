@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   provide-access:
+    if: ${{ contains(github.event.issue.labels.*.name, 'boundary') }}
     environment: boundary
     env:
       BOUNDARY_ADDR: ${{ vars.BOUNDARY_ADDR }}
