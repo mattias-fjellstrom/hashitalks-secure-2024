@@ -1,6 +1,6 @@
 # BOUNDARY -------------------------------------------------------------------------------------------------------------
 resource "hcp_boundary_cluster" "this" {
-  cluster_id = "aws-boundary"
+  cluster_id = "hashitalks-secure-2024"
   username   = "admin"
   password   = var.hcp_boundary_admin_password
   tier       = "Plus"

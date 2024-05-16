@@ -7,5 +7,5 @@ data "hcp_vault_cluster" "this" {
 }
 
 data "hcp_boundary_cluster" "this" {
-  cluster_id = "aws-boundary"
+  cluster_id = "hashitalks-secure-2024"
 }

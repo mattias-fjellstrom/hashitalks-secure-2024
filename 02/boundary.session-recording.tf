@@ -16,8 +16,7 @@ resource "boundary_storage_bucket" "session_recording" {
   # worker_filter = "\"public\" in \"/tags/subnet\""
 
   depends_on = [
-    module.private_worker,
-    module.public_worker,
+    time_sleep.wait_for_workers,
   ]
 }
 
