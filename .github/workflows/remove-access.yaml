@@ -13,7 +13,8 @@ jobs:
       BOUNDARY_ADDR: ${{ vars.BOUNDARY_ADDR }}
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Parse issue content
+        run: |
           regex="(aws.[a-z0-9]+.[a-z0-9]+)"
           if [[ "${{ github.event.issue.body }}" =~ $regex ]]
           then

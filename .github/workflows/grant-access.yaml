@@ -15,7 +15,8 @@ jobs:
       BOUNDARY_ADDR: ${{ vars.BOUNDARY_ADDR }}
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Parse issue content
+        run: |
           regex="([0-9]) hour"
           if [[ "${{ github.event.issue.body }}" =~ $regex ]]
           then
