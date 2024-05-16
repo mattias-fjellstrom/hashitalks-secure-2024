@@ -81,7 +81,7 @@ module "public_worker" {
   boundary_worker_tags = {
     type   = "pki"
     subnet = "public"
-    vaule  = "false"
+    vault  = "false"
     cloud  = "aws"
     region = var.aws_region
   }
