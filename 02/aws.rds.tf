@@ -62,8 +62,9 @@ resource "aws_rds_cluster_parameter_group" "postgres" {
   }
 
   parameter {
-    name  = "rds.force_ssl"
-    value = "0"
+    apply_method = "pending-reboot"
+    name         = "rds.force_ssl"
+    value        = "0"
   }
 }
 

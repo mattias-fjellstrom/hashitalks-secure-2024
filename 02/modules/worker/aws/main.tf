@@ -1,4 +1,18 @@
+resource "boundary_worker" "this" {
+  scope_id                    = "global"
+  name                        = var.worker_name
+  worker_generated_auth_token = ""
+}
+
 locals {
+  boundary_worker_config = templatefile("${path.module}/worker.hcl.tftpl", {
+    is_ingress                            = var.is_ingress_worker
+    hcp_boundary_cluster_id               = split(".", split("//", var.boundary_cluster_url)[1])[0]
+    initial_upstreams                     = coalesce(var.initial_upstreams, [])
+    controller_generated_activation_token = boundary_worker.this.controller_generated_activation_token
+    tags                                  = var.boundary_worker_tags
+  })
+
   boundary_worker_service_config = <<-WORKER_SERVICE_CONFIG
   [Unit]
   Description="HashiCorp Boundary - Identity-based access management for dynamic infrastructure"
@@ -27,7 +41,7 @@ WORKER_SERVICE_CONFIG
         path    = "/etc/systemd/system/boundary.service"
       },
       {
-        content = var.boundary_worker_config
+        content = local.boundary_worker_config
         path    = "/etc/boundary.d/pki-worker.hcl"
       },
     ]

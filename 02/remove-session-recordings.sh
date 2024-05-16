@@ -1,4 +1,4 @@
 #!/bin/bash
 
-BUCKET=$1
+BUCKET=$(terraform output -raw s3_bucket_name)
 aws s3 rm s3://$BUCKET/ --recursive

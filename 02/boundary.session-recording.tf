@@ -10,11 +10,14 @@ resource "boundary_storage_bucket" "session_recording" {
     "disable_credential_rotation" = true
   })
 
-  worker_filter = "\"public\" in \"/tags/subnet\""
+  worker_filter = "\"/tags/subnet/0\" == \"public\""
+
+  # alternative (but equivalent) filter
+  # worker_filter = "\"public\" in \"/tags/subnet\""
 
   depends_on = [
-    module.public_worker,
     module.private_worker,
+    module.public_worker,
   ]
 }
 

@@ -81,34 +81,20 @@ resource "aws_security_group_rule" "private_egress_to_internet_443" {
   ]
 }
 
-# WORKER INSTANCE ------------------------------------------------------------------------------------------------------
-resource "boundary_worker" "private" {
-  scope_id                    = "global"
-  name                        = "private-worker"
-  worker_generated_auth_token = ""
-}
-
-locals {
-  private_worker_config = templatefile("./templates/worker.hcl.tftpl", {
-    is_ingress                            = false
-    hcp_boundary_cluster_id               = ""
-    audit_enabled                         = true
-    observations_enabled                  = true
-    sysevents_enabled                     = true
-    initial_upstreams                     = ["${module.public_worker.private_ip}:9202"]
-    controller_generated_activation_token = boundary_worker.private.controller_generated_activation_token
-    tags = {
-      type   = "pki"
-      vault  = "true"
-      subnet = "private"
-      cloud  = "aws"
-      region = var.aws_region
-    }
-  })
-}
-
 module "private_worker" {
   source = "./modules/worker/aws"
+
+  worker_name       = "private-worker"
+  is_ingress_worker = false
+  initial_upstreams = ["${module.public_worker.private_ip}:9202"]
+  boundary_worker_tags = {
+    type   = "pki"
+    vault  = "true"
+    subnet = "private"
+    cloud  = "aws"
+    region = var.aws_region
+  }
+  boundary_cluster_url = data.hcp_boundary_cluster.this.cluster_url
 
   aws_region            = var.aws_region
   aws_subnet            = data.aws_subnet.private01
@@ -120,6 +106,4 @@ module "private_worker" {
   aws_instance_tags = {
     Name = "Boundary Worker (private)"
   }
-
-  boundary_worker_config = local.private_worker_config
 }

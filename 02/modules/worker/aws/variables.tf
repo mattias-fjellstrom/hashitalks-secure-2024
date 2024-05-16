@@ -41,7 +41,28 @@ variable "aws_subnet" {
   })
 }
 
-variable "boundary_worker_config" {
-  description = "A HCL file for the worker configuration"
+variable "boundary_cluster_url" {
+  description = "Boundary cluster URL"
+  type        = string
+}
+
+variable "boundary_worker_tags" {
+  description = "Tags to add to the Boundary worker"
+  type        = map(string)
+}
+
+variable "initial_upstreams" {
+  description = "Initial upstream Boundary worker (leave blank for ingress workers)"
+  type        = list(string)
+  nullable    = true
+}
+
+variable "is_ingress_worker" {
+  description = "Is this an ingress worker with HCP Boundary as upstream?"
+  type        = bool
+}
+
+variable "worker_name" {
+  description = "Name of the Boundary worker"
   type        = string
 }

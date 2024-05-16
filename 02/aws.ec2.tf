@@ -99,6 +99,31 @@ data "http" "public_key" {
   ]
 }
 
+locals {
+  stress_script = <<-EOF
+  #!/bin/bash
+  stress --cpu $(nproc) --timeout 300
+  EOF
+
+  cron_job = <<-EOF
+  */15 * * * * ubuntu /bin/bash /home/ubuntu/stress.sh
+  EOF
+
+  cloudinit_config_ec2 = {
+    write_files = [
+      {
+        content = local.stress_script
+        path    = "/home/ubuntu/stress.sh"
+      },
+      {
+        owner   = "root:root"
+        content = local.cron_job
+        path    = "/etc/cron.d/issue"
+      },
+    ]
+  }
+}
+
 data "cloudinit_config" "ec2" {
   gzip          = false
   base64_encode = true
@@ -119,13 +144,12 @@ data "cloudinit_config" "ec2" {
       #!/bin/bash
       sudo apt update
       sudo apt install -y stress rand
-
-      # random sleep between 600 and 1500 seconds to simulate an issue occuring randomly
-      sleep $((600 + $(rand -M 900)))
-
-      # stress all cpus for ten minutes
-      stress --cpu $(nproc) --timeout 600
     EOF
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = yamlencode(local.cloudinit_config_ec2)
   }
 }
 
@@ -136,6 +160,8 @@ resource "aws_instance" "private_target" {
   subnet_id                   = data.aws_subnet.private01.id
   user_data_base64            = data.cloudinit_config.ec2.rendered
   associate_public_ip_address = false
+  # monitoring                  = true
+
   tags = {
     Name = "Boundary Target"
   }
